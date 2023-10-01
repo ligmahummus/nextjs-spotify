@@ -9,19 +9,21 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "jose": "^4.14.6",
+    "mongoose": "^7.5.3",
+    "next": "latest",
     "react": "latest",
-    "react-dom": "latest",
-    "next": "latest"
+    "react-dom": "latest"
   },
   "devDependencies": {
-    "typescript": "latest",
+    "@types/node": "^20.8.0",
     "@types/react": "latest",
-    "@types/node": "latest",
     "@types/react-dom": "latest",
     "autoprefixer": "latest",
+    "eslint": "latest",
+    "eslint-config-next": "latest",
     "postcss": "latest",
     "tailwindcss": "latest",
-    "eslint": "latest",
-    "eslint-config-next": "latest"
+    "typescript": "latest"
   }
 }
