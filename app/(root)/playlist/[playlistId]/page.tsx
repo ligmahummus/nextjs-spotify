@@ -1,25 +1,32 @@
+import LoadingState from "@/app/component/navigation/LoadingState";
+import DisplayPlaylist from "@/app/component/playlist/playlist-page/DisplayPlaylist";
 import { getDecodedToken } from "@/app/lib/auth/auth.service";
-import { getPlaylistTracks } from "@/app/lib/spotify/spotify.service";
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 
 const Page = async ({ params }: IPlaylistPage) => {
   const { playlistId } = params;
+
+  let payload = null;
 
   try {
     const cookieStore = cookies();
     const session = cookieStore.get("session");
     if (session && session.value) {
-      const decodedPayload = await getDecodedToken(session.value);
-      const response = await getPlaylistTracks(decodedPayload, playlistId);
-      if (response.error) throw new Error();
-      console.log("🚀 ~ file: page.tsx:17 ~ Page ~ response:", response);
+      payload = await getDecodedToken(session.value);
     }
   } catch (error) {
-    notFound();
+    console.error(error);
   }
 
-  return <main className="container mx-auto mt-12">{playlistId}</main>;
+  return (
+    <main className="container mx-auto mt-12">
+      <Suspense fallback={<LoadingState />}>
+        <DisplayPlaylist playlistId={playlistId} payload={payload} />
+      </Suspense>
+    </main>
+  );
 };
 
 interface IPlaylistPage {
