@@ -2,6 +2,8 @@ import { verify } from "@/app/lib/auth/jwt/jwt.service";
 import { JWTPayload } from "@/app/lib/auth/jwt/jwt.type";
 import { cookies } from "next/headers";
 import Link from "next/link";
+import AuthButton from "./AuthButton";
+import Tooltip from "../ui/Tooltip";
 
 const AuthState = async () => {
   const cookieStore = cookies();
@@ -18,14 +20,21 @@ const AuthState = async () => {
 
   if (!payload)
     return (
-      <Link href="/api/auth">
-        <button>Have an account?</button>
-      </Link>
+      <Tooltip text="Click to login">
+        <Link href="/api/auth">
+          <AuthButton>Have an account?</AuthButton>
+        </Link>
+      </Tooltip>
     );
   return (
-    <Link href="/api/auth/logout" prefetch={false} replace={true}>
-      <button>{payload.name}</button>
-    </Link>
+    <div className="flex items-center gap-6">
+      <Link href="/playlist">Playlists</Link>
+      <Tooltip text="Click to logout">
+        <Link href="/api/auth/logout" prefetch={false} replace={true}>
+          <AuthButton>{payload.name}</AuthButton>
+        </Link>
+      </Tooltip>
+    </div>
   );
 };
 

@@ -4,7 +4,7 @@ import mongo from "../session/mongodb/mongo.client";
 import { SpotifySession } from "../session/session.service";
 import { User } from "../session/session.type";
 import { getMyProfile } from "../spotify/spotify.service";
-import { sign } from "./jwt/jwt.service";
+import { sign, verify } from "./jwt/jwt.service";
 
 function getAuthParams(args: { [key: string]: string }): string {
   const searchParams = new URLSearchParams();
@@ -83,29 +83,37 @@ export async function refreshAccessToken(
  */
 export async function implementLogin(loginCode: string): Promise<string> {
   let token: string = "";
-  const getToken = await fetchAccessToken({ code: loginCode });
-  if (getToken && getToken.access_token) {
-    const profile = await getMyProfile(getToken.access_token);
+  try {
+    const getToken = await fetchAccessToken({ code: loginCode });
+    if (getToken && getToken.access_token) {
+      const profile = await getMyProfile(getToken.access_token);
 
-    const user: Omit<User, "_id"> = {
-      accessToken: getToken.access_token,
-      refreshToken: getToken.refresh_token,
-      name: profile.display_name,
-      email: profile.email,
-      spotifyId: profile.id,
-    };
+      const user: Omit<User, "_id"> = {
+        accessToken: getToken.access_token,
+        refreshToken: getToken.refresh_token,
+        name: profile.display_name,
+        email: profile.email,
+        spotifyId: profile.id,
+      };
 
-    await mongo();
-    const session = new SpotifySession(user.spotifyId);
-    const savedSession = await session.login(user);
-    const signedJwt = await sign({
-      spotifyId: savedSession.spotifyId,
-      name: savedSession.name,
-      accessToken: getToken.access_token,
-    });
+      await mongo();
+      const session = new SpotifySession(user.spotifyId);
+      const savedSession = await session.login(user);
+      const signedJwt = await sign({
+        spotifyId: savedSession.spotifyId,
+        name: savedSession.name,
+        accessToken: getToken.access_token,
+      });
 
-    token = signedJwt;
+      token = signedJwt;
+    }
+    return token;
+  } catch (error) {
+    console.log(error);
+    return token;
   }
+}
 
-  return token;
+export async function getDecodedToken(token: string) {
+  return await verify(token).then((result) => result.payload);
 }

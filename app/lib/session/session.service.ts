@@ -15,6 +15,15 @@ export class SpotifySession {
     return await SessionModel.exists({ spotifyId: this.spotifyId });
   }
 
+  async getSessionRefreshToken() {
+    const session = await SessionModel.findOne({ spotifyId: this.spotifyId });
+    if (session) {
+      return session.refreshToken;
+    } else {
+      return null;
+    }
+  }
+
   async destroy(): Promise<void> {
     await SessionModel.findOneAndDelete({ spotifyId: this.spotifyId });
   }

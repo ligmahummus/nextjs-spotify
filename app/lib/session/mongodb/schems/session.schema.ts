@@ -1,6 +1,6 @@
-import mongoose from "mongoose";
+import { Schema, model, models } from "mongoose";
 
-const sessionSchema = new mongoose.Schema(
+const sessionSchema = new Schema(
   {
     accessToken: {
       type: String,
@@ -28,6 +28,6 @@ const sessionSchema = new mongoose.Schema(
 );
 
 const SessionModel =
-  mongoose.models.Session || mongoose.model("Session", sessionSchema);
+  (models && models.Session) || model("Session", sessionSchema);
 
 export default SessionModel;
