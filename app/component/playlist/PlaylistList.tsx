@@ -3,11 +3,20 @@ import PlaylistGrid from "./PlaylistGrid";
 import { JWTPayload } from "@/app/lib/auth/jwt/jwt.type";
 
 const PlaylistList = async ({ payload }: IPlaylistList) => {
-  const playlists = await getPlaylists(payload);
+  let playlists: any | null;
+  try {
+    playlists = await getPlaylists(payload);
+  } catch (error) {
+    console.log(error);
+  }
 
   return (
     <div>
-      <PlaylistGrid playlistsList={playlists.items} />
+      {playlists ? (
+        <PlaylistGrid playlistsList={playlists.items} />
+      ) : (
+        "No playlists fetched"
+      )}
     </div>
   );
 };

@@ -49,14 +49,20 @@ export async function fetchSpotify(
     return fetch(spotifyUrl, {
       ...opts,
       headers: { Authorization: `Bearer ${newAccessToken}` },
-    }).then((res) => res.json());
+    }).then((res) => {
+      if (res.status === 200) {
+        return res.json();
+      } else {
+        return null;
+      }
+    });
   };
 
   return fetch(spotifyUrl, {
     ...opts,
     headers: { Authorization: `Bearer ${payload.accessToken}` },
   }).then(async (res) => {
-    if (res.status !== 401) {
+    if (res.status === 200) {
       return res.json();
     } else {
       await mongo();

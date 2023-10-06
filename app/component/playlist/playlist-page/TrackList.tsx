@@ -5,8 +5,8 @@ import TrackItem from "./TrackItem";
 const TrackList = ({ tracks }: ITrackList) => {
   return (
     <div>
-      {tracks.map((track) => (
-        <TrackItem track={track} />
+      {tracks.map((track, i) => (
+        <TrackItem track={track} key={i} />
       ))}
     </div>
   );
